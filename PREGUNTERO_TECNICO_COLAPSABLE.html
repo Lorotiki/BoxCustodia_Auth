@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preguntero Técnico - TaskFlow API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        h1 {
+            color: #1f4788;
+            text-align: center;
+            border-bottom: 3px solid #2e5c8a;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        
+        /* Categorías colapsables */
+        .categoria {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .categoria-header {
+            background: linear-gradient(135deg, #2e5c8a 0%, #1f4788 100%);
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .categoria-header:hover {
+            background: linear-gradient(135deg, #1f4788 0%, #162d53 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .categoria-toggle {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .categoria-toggle.open {
+            transform: rotate(180deg);
+        }
+        
+        .categoria-content {
+            display: none;
+            padding: 15px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .categoria-content.open {
+            display: block;
+        }
+        
+        /* Preguntas colapsables */
+        .pregunta {
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .pregunta-header {
+            background-color: #f5f5f5;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #2e5c8a;
+            transition: background-color 0.2s ease;
+        }
+        
+        .pregunta-header:hover {
+            background-color: #efefef;
+        }
+        
+        .pregunta-titulo {
+            flex: 1;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+        
+        .pregunta-toggle {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+            color: #2e5c8a;
+            margin-left: 10px;
+        }
+        
+        .pregunta-toggle.open {
+            transform: rotate(180deg);
+        }
+        
+        .respuesta {
+            background-color: #f0f4f8;
+            border-left: 4px solid #2e5c8a;
+            padding: 12px 15px;
+            margin: 0;
+            border-radius: 0;
+            display: none;
+        }
+        
+        .respuesta.open {
+            display: block;
+        }
+        
+        .respuesta-label {
+            font-weight: bold;
+            color: #2e5c8a;
+            margin-bottom: 5px;
+        }
+        
+        .respuesta-texto {
+            color: #444;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin: 30px 0;
+        }
+        
+        .indice {
+            background-color: #f0f4f8;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .indice ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .indice li {
+            padding: 5px 0;
+        }
+        
+        .indice a {
+            color: #2e5c8a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .indice a:hover {
+            text-decoration: underline;
+        }
+        
+        .info-header {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejar categorías
+            document.querySelectorAll('.categoria-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const toggle = this.querySelector('.categoria-toggle');
+                    
+                    content.classList.toggle('open');
+                    toggle.classList.toggle('open');
+                });
+            });
+            
+            // Manejar preguntas
+            document.querySelectorAll('.pregunta-header').forEach(header => {
+                header.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const respuesta = this.nextElementSibling;
+                    const toggle = this.querySelector('.pregunta-toggle');
+                    
+                    respuesta.classList.toggle('open');
+                    toggle.classList.toggle('open');
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+<h1>Preguntero Técnico - TaskFlow API</h1>
+
+<div class="info-header">
+    <strong>Proyecto:</strong> TaskFlow - API REST de Gestión de Tareas<br>
+    <strong>Tecnología:</strong> Spring Boot 4.0.2, JPA, PostgreSQL<br>
+    <strong>Fecha:</strong> Febrero 2026<br>
+    <strong>Total:</strong> 120 preguntas | 12 categorías
+</div>
+
+<hr>
+
+<h2 style="text-align: center; color: #1f4788;">📑 ÍNDICE DE CATEGORÍAS</h2>
+<div class="indice" style="columns: 2; gap: 20px;">
+    <ul>
+        <li><strong>Teóricas:</strong></li>
+        <li><a href="#teoricas-simples">1. Teóricas Simples</a></li>
+        <li><a href="#teoricas-medias">2. Teóricas Medias</a></li>
+        <li><a href="#teoricas-complejas">3. Teóricas Complejas</a></li>
+        <li style="margin-top: 15px;"><strong>Diseño:</strong></li>
+        <li><a href="#diseno-simples">4. Diseño Simples</a></li>
+        <li><a href="#diseno-medias">5. Diseño Medias</a></li>
+        <li><a href="#diseno-complejas">6. Diseño Complejas</a></li>
+        <li style="margin-top: 15px;"><strong>Técnicas:</strong></li>
+        <li><a href="#tecnicas-simples">7. Técnicas Simples</a></li>
+        <li><a href="#tecnicas-medias">8. Técnicas Medias</a></li>
+        <li><a href="#tecnicas-complejas">9. Técnicas Complejas</a></li>
+        <li style="margin-top: 15px;"><strong>Código:</strong></li>
+        <li><a href="#codigo-simples">10. Cuestiones de Código Simples</a></li>
+        <li><a href="#codigo-medias">11. Cuestiones de Código Medias</a></li>
+        <li><a href="#codigo-complejas">12. Cuestiones de Código Complejas</a></li>
+    </ul>
+</div>
+
+<hr>
+
+<!-- TEÓRICAS SIMPLES -->
+<div class="categoria">
+    <div id="teoricas-simples" class="categoria-header">
+        <span>TEÓRICAS SIMPLES</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Qué es una API REST?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Una API REST expone recursos a través de HTTP usando métodos como GET, POST, PUT, PATCH y DELETE, y responde con formatos como JSON. Sigue el modelo cliente-servidor y es stateless.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Qué hace Spring Boot?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Simplifica la creación de aplicaciones Spring al autoconfigurar componentes y permitir arrancar con poca configuración. Incluye servidor embebido y facilita el desarrollo rápido.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Qué es JPA?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Una especificación para mapear objetos Java a tablas de base de datos y manejar persistencia con anotaciones. Define un estándar para ORM.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Qué es Hibernate?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Es la implementación más común de JPA que gestiona el mapeo ORM y las operaciones SQL automáticamente. Abstrae los detalles de la BD.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Qué significa ORM?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Object-Relational Mapping: mapeo entre clases Java y tablas SQL. Permite trabajar con objetos en lugar de escribir SQL directamente.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Qué es una entidad en JPA?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Una clase anotada con `@Entity` que representa una tabla de base de datos. Está gestionada por el persistence context de JPA.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Qué hace `@Id` y `@GeneratedValue`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">`@Id` marca la clave primaria de la entidad; `@GeneratedValue` indica que se auto-genera (por ejemplo, con autoincremental).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Qué diferencia hay entre PUT y PATCH?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">PUT reemplaza el recurso completo; PATCH actualiza parcialmente uno o más campos. PUT requiere enviar todo; PATCH solo lo que cambia.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es un DTO y para qué sirve?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Un DTO (Data Transfer Object) es un objeto para transportar datos entre capas o cliente-servidor, evitando exponer entidades directamente.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Qué es BCrypt y por qué se usa?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Un algoritmo de hashing para contraseñas, seguro porque incluye salt y es lento a propósito, dificultando ataques de fuerza bruta.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- TEÓRICAS MEDIAS -->
+<div class="categoria">
+    <div id="teoricas-medias" class="categoria-header">
+        <span>TEÓRICAS MEDIAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Qué es Inversión de Control (IoC)?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Es el principio donde el framework crea y gestiona objetos (beans) y los inyecta donde se necesitan, en lugar de que el código maneje instancias.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Qué es la Inyección de Dependencias (DI)?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Es el mecanismo de pasar dependencias a una clase en lugar de que la clase las cree por sí misma, mejorando desacoplamiento y testabilidad.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Qué es un Bean en Spring?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Un objeto gestionado por el contenedor de Spring, creado y configurado por él. Se registra con anotaciones como `@Component`, `@Service`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Qué es una transacción en JPA?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Un conjunto de operaciones que se ejecutan como una unidad atómica: o se completan todas o ninguna. Garantiza consistencia.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Para qué sirve `@Transactional`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Marca un método/clase para que Spring gestione transacciones automáticamente, abriendo, commiteando y rollbackeando según corresponda.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Qué es la paginación en Spring Data?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Es la forma de obtener resultados en páginas usando `Pageable` y `Page<T>`. Mejora performance y UX al dividir grandes datasets.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Qué es un `Pageable` y un `Page<T>`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">`Pageable` define la página solicitada, tamaño y orden; `Page<T>` contiene los resultados y metadatos (total de elementos, páginas).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Qué es una excepción controlada vs no controlada?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Controlada (`checked`): heredan de `Exception` y deben manejarse o declararse. No controlada: `RuntimeException`, se propagan automáticamente.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es una capa de servicio?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Contiene la lógica de negocio y coordina repositorios. Separa controllers de repositorios, mejorando mantenibilidad y testabilidad.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Qué diferencia hay entre `@Component`, `@Service` y `@Repository`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Todas registran beans, pero `@Service` y `@Repository` agregan semántica específica (lógica de negocio y acceso a datos) y manejo especial de excepciones.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- TEÓRICAS COMPLEJAS -->
+<div class="categoria">
+    <div id="teoricas-complejas" class="categoria-header">
+        <span>TEÓRICAS COMPLEJAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Qué es el patrón Unit of Work?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">JPA agrupa cambios en el `Persistence Context` y los sincroniza con la BD al commit, evitando múltiples writes y garantizando consistencia.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Qué es el `Persistence Context`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Es el primer nivel de caché de JPA donde se gestionan las entidades durante una transacción. Rastrea cambios y genera SQL automáticamente.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Qué es Lazy Loading y cuáles son sus riesgos?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Carga relaciones bajo demanda en lugar de eagerly. Riesgo: `LazyInitializationException` si se accede a relaciones fuera de la sesión.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Qué es N+1 Problem?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Se generan muchas queries pequeñas (N+1) al acceder relaciones. Se mitiga con `fetch join`, `EntityGraph` o batch fetching.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Qué es idempotencia en HTTP?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Una operación idempotente puede ejecutarse varias veces con el mismo resultado (GET, PUT, DELETE son idempotentes; POST no).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Qué es el patrón Repository?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Abstrae el acceso a datos, desacoplando lógica de negocio de la persistencia. Permite cambiar BD sin afectar el resto del código.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Qué diferencia hay entre `@OneToMany` y `@ManyToMany`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">`@OneToMany` implica un dueño único; `@ManyToMany` crea tabla intermedia y complica el modelo significativamente.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Qué es concurrencia optimista?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Conflictos cuando múltiples transacciones actualizan el mismo recurso. Se resuelve con `@Version` y control de versiones.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Por qué no exponer entidades directamente?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita acoplamiento, fuga de datos sensibles, permite versionar el contrato sin cambiar la BD, y facilita transformaciones.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Qué es EntityGraph?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Define qué relaciones cargar eager en una consulta específica para evitar N+1 sin hardcodear fetch joins.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- DISEÑO SIMPLES -->
+<div class="categoria">
+    <div id="diseno-simples" class="categoria-header">
+        <span>DISEÑO SIMPLES</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Qué es separación de capas?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Dividir en controller, service y repository. Mejora mantenibilidad, testabilidad y permite cambios independientes en cada capa.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Responsabilidad del Controller?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Recibir HTTP, mapear requests a DTOs, validación básica y delegar al service. No debe contener lógica de negocio.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Responsabilidad del Service?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Contener la lógica de negocio, coordinar repositorios y realizar validaciones.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Responsabilidad del Repository?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Acceder a la base de datos y encapsular consultas. Abstrae detalles de JPA y SQL.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Por qué usar DTOs?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Para controlar el contrato y evitar exponer campos internos o relaciones que no deben ser públicas.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Qué es un contrato de API?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">El formato y reglas de request/response que el cliente espera. Debe ser estable y versionable.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Qué es un endpoint REST?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Una URL que representa un recurso y permite operar sobre él (GET, POST, PUT, PATCH, DELETE).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Por qué códigos HTTP correctos?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Mejora semántica y facilita integración. Permite diferenciar entre 200, 201, 204, 400, 404, 409, 500.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es "resource-oriented design"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Diseñar alrededor de recursos (`/tasks`, `/users`) y sus acciones, no alrededor de verbos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Qué es un CRUD?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Create, Read, Update, Delete: operaciones básicas sobre un recurso (POST, GET, PUT/PATCH, DELETE).</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- DISEÑO MEDIAS -->
+<div class="categoria">
+    <div id="diseno-medias" class="categoria-header">
+        <span>DISEÑO MEDIAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Cómo decidir entre PUT y PATCH?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">PUT reemplaza el recurso completo; PATCH actualiza campos específicos. Usa PATCH si solo cambias 1-2 campos; PUT si cambias todo.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Cuándo conviene crear endpoint de stats separado?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Cuando necesitas agregaciones (conteos, promedios) y resulta ineficiente/complejo en el endpoint de listado.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Cómo diseñar filtros en endpoints?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Usando query params opcionales (`status`, `priority`, `assigneeId`) y combinaciones controladas. Validar valores permitidos en el service.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Por qué incluir paginación?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita respuestas gigantes, mejora rendimiento al limitar queries, y es mejor UX.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Cómo manejar validaciones?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Validaciones de formato en DTOs (JSR-380) y reglas de negocio complejas en el service.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Qué significa "single responsibility"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Cada capa tiene un rol claro: controller maneja HTTP, service lógica, repository datos. Facilita testing y reuso.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Por qué GlobalExceptionHandler?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Centraliza manejo de errores y asegura respuestas consistentes. Evita duplicar `try-catch` en todo el código.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Por qué enums para status?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Asegura valores válidos, reduce errores, facilita queries y es más eficiente que strings en la BD.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es "contract-first thinking"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Diseñar primero el contrato de API (DTOs, endpoints) y luego implementar lógica. Alinea equipo frontend-backend.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Riesgo si controller maneja lógica?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Se vuelve difícil de mantener, testear y reutilizar. Viola SRP y complica cambios futuros.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- DISEÑO COMPLEJAS -->
+<div class="categoria">
+    <div id="diseno-complejas" class="categoria-header">
+        <span>DISEÑO COMPLEJAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Cómo soportar multi-tenant?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Agregar `tenant_id` a entidades y filtrar automáticamente por tenant en repositorios o con filtros globales de Hibernate.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Cómo evitar "chatty APIs"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Incluyendo campos necesarios en una sola respuesta, usando endpoints agregados, proyecciones o GraphQL si aplica.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Estrategia para versionar API?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Versionado en URL (`/v1`, `/v2`) o por header. Mantener compatibilidad hacia atrás en cambios no-breaking.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Cómo diseñar permisos por roles?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">RBAC (Role-Based Access Control) con roles y permisos por endpoint. Validar en filtros de seguridad o `@PreAuthorize`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Si estadísticas son costosas?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Pre-agregar datos en tablas dedicadas, usar caché con TTL, o actualizarlas via eventos asincronos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Cómo manejar auditoría?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Agregar campos auditables (`created_by`, `updated_by`, `created_at`, `updated_at`) y eventos de dominio para cambios importantes.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Qué problema resuelve paginación por cursor?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita inconsistencias cuando se insertan/borran filas entre requests y mejora performance en datasets masivos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Cómo diseñar "bulk update"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Endpoint específico (`POST /tasks/bulk-update`) con validación y transacción controlada. Retornar detalle de éxitos/fallos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es "bounded context"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Separar dominios de negocio en límites claros para reducir acoplamiento, facilitar escalado y claridad de modelos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Cuándo pasarse a microservicios?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con equipos independientes, límites claros de dominio, necesidad de escalado separado y tolerancia a latencia de red.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- TÉCNICAS SIMPLES -->
+<div class="categoria">
+    <div id="tecnicas-simples" class="categoria-header">
+        <span>TÉCNICAS SIMPLES</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Qué hace `@RestController`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Marca la clase como controller REST y retorna JSON por defecto (implica `@Controller` + `@ResponseBody`).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) `@RequestParam` vs `@PathVariable`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">`@RequestParam` toma parámetros de query (`?status=DONE`); `@PathVariable` toma valores de la URL (`/tasks/123`).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Qué hace `@RequestBody`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Convierte el JSON del request en un objeto Java automáticamente (deserialización).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Qué hace `@Valid`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Ejecuta validaciones definidas en el DTO (anotaciones como `@NotNull`, `@Email`, etc.).</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Qué es Lombok y `@Data`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Lombok genera código boilerplate. `@Data` genera getters, setters, `equals`, `hashCode`, `toString`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Para qué `ResponseEntity`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Permite definir el cuerpo y el status HTTP explícitamente en la respuesta.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Qué hace `@GetMapping`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Mapea un endpoint HTTP GET a un método. Shortcut para `@RequestMapping(method = RequestMethod.GET)`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Qué hace `@Autowired`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Inyecta automáticamente una dependencia desde el contenedor de Spring.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es `PageRequest`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Objeto que define página, tamaño y orden para paginación. Se pasa como `Pageable` al repository.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Qué retorna repository con `Optional`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Un contenedor que puede tener valor o estar vacío. Evita `null` y obliga a manejar el caso "no encontrado".</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- TÉCNICAS MEDIAS -->
+<div class="categoria">
+    <div id="tecnicas-medias" class="categoria-header">
+        <span>TÉCNICAS MEDIAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Cómo validación de DTOs?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con anotaciones JSR-380 en los DTOs y `@Valid` en el controller. Los errores se capturan por el `GlobalExceptionHandler`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) `@Enumerated(EnumType.STRING)`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Guarda el nombre del enum en la BD en lugar del ordinal. Evita problemas si cambia el orden de los enums.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) `findById` vs `getById`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">`findById` retorna `Optional`; `getById` retorna proxy lazy-loadable y lanza `EntityNotFoundException` si no existe.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Qué es `@JsonIgnore`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita serializar un campo en JSON. Útil para evitar ciclos, datos sensibles o campos internos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) DTO específico para actualización?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Permite actualización parcial específica sin mezclar/requerir otros campos. Define contrato claro.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Cómo búsqueda por título?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Usando `findByTitleContainingIgnoreCase(String search)` o `findByTitleLikeIgnoreCase`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Cómo manejar errores de validación?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Se captura `MethodArgumentNotValidException` en el handler global y se devuelve `ErrorResponse` con lista de errores.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) `@Column(nullable = false)`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Genera restricción NOT NULL en la columna. Valida a nivel BD y JPA.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Qué es `@Builder`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Genera patrón builder para construcción fluida de objetos. Útil en DTOs, tests y constructores con muchos parámetros.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Si se usa `cascade` mal?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Se pueden eliminar o persistir entidades no deseadas automáticamente, causando data corruption o errores.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- TÉCNICAS COMPLEJAS -->
+<div class="categoria">
+    <div id="tecnicas-complejas" class="categoria-header">
+        <span>TÉCNICAS COMPLEJAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Controlar rendimiento con múltiples filtros?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Usando índices adecuados en BD, combinando filtros en query derivada o `Specification`, y paginación obligatoria.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Qué es `EntityGraph`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Define qué relaciones cargar eagerly en una consulta específica para evitar N+1 sin hardcodear fetch joins.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Qué es "dirty checking"?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Hibernate detecta cambios en entidades gestionadas comparándolas y genera SQL automáticamente al commit.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Cómo evitar `LazyInitializationException`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Accediendo a relaciones dentro de la transacción o usando `fetch join`/`EntityGraph` para cargar eagerly.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿Cómo soft deletes?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Agregar campo `deleted_at` o `is_deleted` y filtrar en todas las queries o usar `@Where(clause = "deleted_at IS NULL")`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) ¿Concurrencia en actualizaciones?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con `@Version` para optimistic locking. Si hay conflicto, se lanza `OptimisticLockException` y el cliente reintenta.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿Proyecciones en Spring Data?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Traer solo los campos necesarios, reduciendo payload de respuesta y costo de consulta en la BD.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿Validaciones cross-field?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con validadores custom (`@Constraint`) que implementan `ConstraintValidator` y acceden múltiples fields.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Rate limit para login?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con filtros o interceptores, usando Redis o bucket en memoria por IP/usuario. Retornar 429 Too Many Requests.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) `Specification` vs métodos derivados?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Permite combinar filtros dinámicamente sin explotar el número de métodos. Escala bien con múltiples filtros opcionales.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- CÓDIGO SIMPLES -->
+<div class="categoria">
+    <div id="codigo-simples" class="categoria-header">
+        <span>CUESTIONES DE CÓDIGO SIMPLES</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Por qué `@RequestBody` en login?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Porque los datos (email, password) vienen en JSON en el body y deben mapearse al DTO `LoginRequest`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) ¿Por qué usar `Optional`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita `NullPointerException` y obliga a manejar explícitamente el caso "no encontrado" con `.orElseThrow()` o `.ifPresent()`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿Por qué `ResponseEntity`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Permite devolver status HTTP correctos (201, 204, 404) junto con el cuerpo, en lugar de solo retornar el objeto.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Sin `@Valid` en DTO?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Las validaciones anotadas (`@NotNull`, `@Email`) no se ejecutan y entran datos inválidos sin error.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿DTOs separados Create/Update?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Porque los campos requeridos pueden ser distintos. En creación, `status` es opcional; en actualización, puede serlo también.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) `@Enumerated(EnumType.STRING)`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita errores cuando cambias el orden de los enums o agregas valores nuevos en el medio.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) ¿`@JsonFormat` en fechas?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Define el formato de serialización/deserialización. Ejemplo: `@JsonFormat(pattern = "yyyy-MM-dd")` para `"2025-03-15"`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) `@Column(unique = true)` en email?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita duplicados a nivel BD y agrega segunda línea de defensa además de la validación lógica en el service.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Por qué 201 en POST?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Porque se creó un recurso nuevo. Es más semánticamente correcta que 200 y comunica al cliente que hubo creación.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) Sin manejar `ResourceNotFoundException`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">El cliente recibe 500 Internal Server Error genérico en lugar de 404, confundiendo si fue error del servidor o dato no encontrado.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- CÓDIGO MEDIAS -->
+<div class="categoria">
+    <div id="codigo-medias" class="categoria-header">
+        <span>CUESTIONES DE CÓDIGO MEDIAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) DTO específico para actualizar estado?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Para limitar el cambio únicamente al estado y evitar que se actualicen accidentalmente otros campos como `title` o `priority`.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) `Page<TaskResponse>` vs `List`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">`Page<T>` incluye metadatos: total de elementos, número de páginas, página actual. Útil para UI que necesita info de paginación.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) ¿`existsByEmail` antes de crear?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Para validar unicidad tempranamente y retornar 409 Conflict antes de que intente insertar y falle a nivel BD.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) ¿Endpoint de stats separado?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Porque devuelve agregaciones (conteos por estado/prioridad), no tareas individuales. Se optimiza distinto y lógicamente es diferente.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) ¿BCrypt en lugar de MD5?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">BCrypt es lento por diseño e incluye salt automático, resistiendo ataques de fuerza bruta. MD5/SHA son rápidos y vulnerables.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) `@ManyToOne` en Task→User?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Una tarea tiene un solo usuario asignado, pero un usuario puede tener muchas tareas. Es el lado "many" de la relación.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) `@JsonIgnore` en relaciones bidireccionales?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Evita ciclos infinitos al serializar JSON. Si Task tiene User y User tiene List<Task>, circula infinito sin marcas de ignore.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) ¿204 en `deleteTask`?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Porque no hay contenido en la respuesta y 204 No Content es el estándar para operaciones exitosas sin body.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) ¿Sin validar status/priority?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">La BD puede recibir valores inválidos (strings aleatorios en lugar de enum) y romper la integridad del dominio.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) ¿Service centraliza filtros?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Para mantener el controller limpio y permitir reutilización de filtros en múltiples endpoints o contextos.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- CÓDIGO COMPLEJAS -->
+<div class="categoria">
+    <div id="codigo-complejas" class="categoria-header">
+        <span>CUESTIONES DE CÓDIGO COMPLEJAS</span>
+        <span class="categoria-toggle">▼</span>
+    </div>
+    <div class="categoria-content">
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">1) ¿Evitar escalada de filtros?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Usando `Specification<Task>` o Criteria API para construir queries dinámicas y combinables sin explotar el número de métodos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">2) N+1 con Task→Comments?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con `fetch join` en JPQL, `EntityGraph`, batch fetching en Hibernate o lazy collections con batch size.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">3) Cambios concurrentes en tarea?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con `@Version` (optimistic locking). Si dos usuarios editan simultáneamente, uno recibe `OptimisticLockException` y reintenta.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">4) Desacoplamiento Entity→DTO?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Usando mappers dedicados o librerías como MapStruct para evitar lógica de mapeo duplicada o en controladores.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">5) Consistencia en actualizaciones parciales?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Validando reglas de negocio en el service y usando DTOs específicos por operación para definir qué campos son permitidos.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">6) Optimizar `/tasks/stats` con data grande?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Con queries agregadas directas en SQL o HQL, índices adecuados y, si aplica, caché con TTL o pre-agregaciones en tablas.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">7) Si `Page` es muy costoso?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Usar `Slice<T>` que no cuenta total, o paginación por cursor para evitar `COUNT(*)` costoso en tablas gigantes.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">8) Validaciones dependientes del estado?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Ejemplo: no permitir DONE si falta assignee. Se valida en el service con lógica contextual que consulta estado actual.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">9) Orden por múltiples campos?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Permitir `Sort.by` con varios criterios (`order_by=created_at,desc&order_by=priority,asc`), validando que campos existan para evitar inyección.</div>
+            </div>
+        </div>
+        
+        <div class="pregunta">
+            <div class="pregunta-header">
+                <span class="pregunta-titulo">10) Logs y trazas para debug?</span>
+                <span class="pregunta-toggle">▼</span>
+            </div>
+            <div class="respuesta">
+                <div class="respuesta-label">Respuesta:</div>
+                <div class="respuesta-texto">Agregar logging estructurado en service/controller, generar request ID único y correlacionar en filtros/interceptores para rastrear flujo.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div style="text-align: center; margin-top: 40px; color: #666;">
+    <p><strong>✅ PREGUNTERO TÉCNICO COLAPSABLE</strong></p>
+    <p>Puedes expandir/colapsar cada categoría y pregunta haciendo click</p>
+    <p>Total: 120 preguntas | 12 categorías | Spring Boot + JPA + PostgreSQL</p>
+</div>
+
+</body>
+</html>
