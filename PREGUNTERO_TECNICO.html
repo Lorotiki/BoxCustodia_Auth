@@ -101,21 +101,29 @@
 <p>**Fecha:** Febrero 2026</p>
 <p>**Nivel:** Simple, Medio, Avanzado</p>
 <hr>
-<h2>ÍNDICE</h2>
-<p>1. [Teóricas Simples](#teóricas-simples)</p>
-<p>2. [Teóricas Medias](#teóricas-medias)</p>
-<p>3. [Teóricas Complejas](#teóricas-complejas)</p>
-<p>4. [Diseño Simples](#diseño-simples)</p>
-<p>5. [Diseño Medias](#diseño-medias)</p>
-<p>6. [Diseño Complejas](#diseño-complejas)</p>
-<p>7. [Técnicas Simples](#técnicas-simples)</p>
-<p>8. [Técnicas Medias](#técnicas-medias)</p>
-<p>9. [Técnicas Complejas](#técnicas-complejas)</p>
-<p>10. [Cuestiones de Código Simples](#cuestiones-de-código-simples)</p>
-<p>11. [Cuestiones de Código Medias](#cuestiones-de-código-medias)</p>
-<p>12. [Cuestiones de Código Complejas](#cuestiones-de-código-complejas)</p>
+<h2 style="text-align: center; color: #1f4788;">📑 ÍNDICE DE CATEGORÍAS</h2>
+<div class="indice" style="columns: 2; gap: 20px;">
+    <ul>
+        <li><strong>Teóricas:</strong></li>
+        <li><a href="#teoricas-simples">1. Teóricas Simples</a></li>
+        <li><a href="#teoricas-medias">2. Teóricas Medias</a></li>
+        <li><a href="#teoricas-complejas">3. Teóricas Complejas</a></li>
+        <li style="margin-top: 15px;"><strong>Diseño:</strong></li>
+        <li><a href="#diseno-simples">4. Diseño Simples</a></li>
+        <li><a href="#diseno-medias">5. Diseño Medias</a></li>
+        <li><a href="#diseno-complejas">6. Diseño Complejas</a></li>
+        <li style="margin-top: 15px;"><strong>Técnicas:</strong></li>
+        <li><a href="#tecnicas-simples">7. Técnicas Simples</a></li>
+        <li><a href="#tecnicas-medias">8. Técnicas Medias</a></li>
+        <li><a href="#tecnicas-complejas">9. Técnicas Complejas</a></li>
+        <li style="margin-top: 15px;"><strong>Código:</strong></li>
+        <li><a href="#codigo-simples">10. Cuestiones de Código Simples</a></li>
+        <li><a href="#codigo-medias">11. Cuestiones de Código Medias</a></li>
+        <li><a href="#codigo-complejas">12. Cuestiones de Código Complejas</a></li>
+    </ul>
+</div>
 <hr>
-<h2>TEÓRICAS SIMPLES</h2>
+<h2 id="teoricas-simples">TEÓRICAS SIMPLES</h2>
 <h3>1) ¿Qué es una API REST?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Una API REST expone recursos a través de HTTP usando métodos como GET, POST, PUT, PATCH y DELETE, y responde con formatos como JSON. Sigue el modelo cliente-servidor y es stateless.</p>
@@ -156,7 +164,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Un algoritmo de hashing para contraseñas, seguro porque incluye salt y es lento a propósito, dificultando ataques de fuerza bruta.</p>
 <hr>
-<h2>TEÓRICAS MEDIAS</h2>
+<h2 id="teoricas-medias">TEÓRICAS MEDIAS</h2>
 <h3>1) ¿Qué es Inversión de Control (IoC) en Spring?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Es el principio donde el framework crea y gestiona objetos (beans) y los inyecta donde se necesitan, en lugar de que el código maneje instancias.</p>
@@ -197,7 +205,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Contiene la lógica de negocio y coordina repositorios. Separa controllers de repositorios, mejorando mantenibilidad y testabilidad.</p>
 <hr>
-<h2>TEÓRICAS COMPLEJAS</h2>
+<h2 id="teoricas-complejas">TEÓRICAS COMPLEJAS</h2>
 <h3>1) ¿Qué es el patrón Unit of Work en JPA?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>JPA agrupa cambios en el `Persistence Context` y los sincroniza con la BD al commit, evitando múltiples writes y garantizando consistencia.</p>
@@ -241,7 +249,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Evita acoplamiento, fuga de datos sensibles, permite versionar el contrato sin cambiar la BD, y facilita transformaciones.</p>
 <hr>
-<h2>DISEÑO SIMPLES</h2>
+<h2 id="diseno-simples">DISEÑO SIMPLES</h2>
 <h3>1) ¿Qué es separación de capas y por qué se usa?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Dividir la aplicación en controller, service y repository. Mejora mantenibilidad, testabilidad y permite cambios independientes en cada capa.</p>
@@ -282,7 +290,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Create, Read, Update, Delete: cuatro operaciones básicas sobre un recurso, correspondientes a POST, GET, PUT/PATCH, DELETE.</p>
 <hr>
-<h2>DISEÑO MEDIAS</h2>
+<h2 id="diseno-medias">DISEÑO MEDIAS</h2>
 <h3>1) ¿Cómo decidir entre PUT y PATCH en diseño de API?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>PUT reemplaza el recurso completo; PATCH actualiza campos específicos. Usa PATCH si solo cambias 1-2 campos; PUT si cambias todo.</p>
@@ -323,7 +331,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Se vuelve difícil de mantener, testear y reutilizar. Viola SRP y complica cambios futuros.</p>
 <hr>
-<h2>DISEÑO COMPLEJAS</h2>
+<h2 id="diseno-complejas">DISEÑO COMPLEJAS</h2>
 <h3>1) ¿Cómo diseñarías la API para soportar multi-tenant?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Agregar `tenant_id` a entidades y filtrar automáticamente por tenant en repositorios o con filtros globales de Hibernate.</p>
@@ -364,7 +372,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Cuando hay equipos independientes, límites claros de dominio, necesidad de escalado separado y tolerancia a latencia de red.</p>
 <hr>
-<h2>TÉCNICAS SIMPLES</h2>
+<h2 id="tecnicas-simples">TÉCNICAS SIMPLES</h2>
 <h3>1) ¿Qué hace `@RestController`?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Marca la clase como controller REST y retorna JSON por defecto (implica `@Controller` + `@ResponseBody`).</p>
@@ -405,7 +413,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Un contenedor que puede tener valor o estar vacío. Evita `null` y obliga a manejar el caso "no encontrado".</p>
 <hr>
-<h2>TÉCNICAS MEDIAS</h2>
+<h2 id="tecnicas-medias">TÉCNICAS MEDIAS</h2>
 <h3>1) ¿Cómo funciona la validación de DTOs en Spring?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Con anotaciones JSR-380 en los DTOs y `@Valid` en el controller. Los errores se capturan por el `GlobalExceptionHandler`.</p>
@@ -446,7 +454,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Se pueden eliminar o persistir entidades no deseadas automáticamente, causando data corruption o errores inesperados.</p>
 <hr>
-<h2>TÉCNICAS COMPLEJAS</h2>
+<h2 id="tecnicas-complejas">TÉCNICAS COMPLEJAS</h2>
 <h3>1) ¿Cómo controlarías el rendimiento de un endpoint con múltiples filtros?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Usando índices adecuados en BD, combinando filtros en query derivada o `Specification`, y paginación obligatoria.</p>
@@ -487,7 +495,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Permite combinar filtros dinámicamente sin explotar el número de métodos. Escala bien con múltiples filtros opcionales.</p>
 <hr>
-<h2>CUESTIONES DE CÓDIGO SIMPLES</h2>
+<h2 id="codigo-simples">CUESTIONES DE CÓDIGO SIMPLES</h2>
 <h3>1) ¿Por qué `@RequestBody` en el login?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Porque los datos (email, password) vienen en JSON en el body y deben mapearse al DTO `LoginRequest`.</p>
@@ -528,7 +536,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>El cliente recibe un 500 Internal Server Error genérico en lugar de 404, confundiendo si fue error del servidor o dato no encontrado.</p>
 <hr>
-<h2>CUESTIONES DE CÓDIGO MEDIAS</h2>
+<h2 id="codigo-medias">CUESTIONES DE CÓDIGO MEDIAS</h2>
 <h3>1) ¿Por qué en `updateTaskStatus` solo aceptamos un DTO específico?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Para limitar el cambio únicamente al estado y evitar que se actualicen accidentalmente otros campos como `title` o `priority`.</p>
@@ -569,7 +577,7 @@
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Para mantener el controller limpio y permitir reutilización de filtros en múltiples endpoints o contextos.</p>
 <hr>
-<h2>CUESTIONES DE CÓDIGO COMPLEJAS</h2>
+<h2 id="codigo-complejas">CUESTIONES DE CÓDIGO COMPLEJAS</h2>
 <h3>1) ¿Cómo evitarías que la lógica de filtros escale mal a medida que crecen los parámetros?</h3>
 <div class="respuesta"><div class="respuesta-label">Respuesta:</div><div class="respuesta-texto"></div></div>
 <p>Usando `Specification<Task>` o Criteria API para construir queries dinámicas y combinables sin explotar el número de métodos.</p>
