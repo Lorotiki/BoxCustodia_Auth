@@ -23,26 +23,103 @@
             margin-bottom: 30px;
         }
         
-        h2 {
-            color: #2e5c8a;
-            border-left: 5px solid #1f4788;
-            padding-left: 15px;
-            page-break-before: always;
-            margin-top: 40px;
+        /* Categorías colapsables */
+        .categoria {
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         
-        h3 {
-            color: #1a1a1a;
-            margin-top: 20px;
-            margin-bottom: 8px;
+        .categoria-header {
+            background: linear-gradient(135deg, #2e5c8a 0%, #1f4788 100%);
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .categoria-header:hover {
+            background: linear-gradient(135deg, #1f4788 0%, #162d53 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .categoria-toggle {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .categoria-toggle.open {
+            transform: rotate(180deg);
+        }
+        
+        .categoria-content {
+            display: none;
+            padding: 15px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .categoria-content.open {
+            display: block;
+        }
+        
+        /* Preguntas colapsables */
+        .pregunta {
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .pregunta-header {
+            background-color: #f5f5f5;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #2e5c8a;
+            transition: background-color 0.2s ease;
+        }
+        
+        .pregunta-header:hover {
+            background-color: #efefef;
+        }
+        
+        .pregunta-numero {
+            font-weight: bold;
+            color: #1f4788;
+            margin-right: 10px;
+        }
+        
+        .pregunta-toggle {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+            color: #2e5c8a;
+        }
+        
+        .pregunta-toggle.open {
+            transform: rotate(180deg);
         }
         
         .respuesta {
             background-color: #f0f4f8;
             border-left: 4px solid #2e5c8a;
             padding: 12px 15px;
-            margin: 10px 0 20px 0;
-            border-radius: 4px;
+            margin: 0;
+            border-radius: 0;
+            display: none;
+        }
+        
+        .respuesta.open {
+            display: block;
         }
         
         .respuesta-label {
@@ -90,9 +167,35 @@
         
         @media print {
             body { background-color: white; }
-            h2 { page-break-before: always; }
+            .categoria-header { page-break-before: always; }
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejar categorías
+            document.querySelectorAll('.categoria-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const toggle = this.querySelector('.categoria-toggle');
+                    
+                    content.classList.toggle('open');
+                    toggle.classList.toggle('open');
+                });
+            });
+            
+            // Manejar preguntas
+            document.querySelectorAll('.pregunta-header').forEach(header => {
+                header.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const respuesta = this.nextElementSibling;
+                    const toggle = this.querySelector('.pregunta-toggle');
+                    
+                    respuesta.classList.toggle('open');
+                    toggle.classList.toggle('open');
+                });
+            });
+        });
+    </script>
 </head>
 <body>
 <h1>Preguntero Técnico - TaskFlow API</h1>
